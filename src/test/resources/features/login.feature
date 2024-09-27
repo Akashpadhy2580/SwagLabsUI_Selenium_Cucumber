@@ -19,7 +19,7 @@ Feature: Login and Logout Feature
     And I enter password "<Password>"
     And I click the Login Button
     Then I should be on the "Products" page
-cm
+
     Examples:
       | Username                | Password     |
       | standard_user           | secret_sauce |
