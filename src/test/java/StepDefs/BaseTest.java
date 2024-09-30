@@ -10,6 +10,9 @@ import org.openqa.selenium.support.ui.FluentWait;
 import pages.*;
 import utils.DriverFactory;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Properties;
 
 
@@ -18,8 +21,8 @@ public class BaseTest {
     public static RemoteWebDriver driver;
     public static FluentWait<RemoteWebDriver> wait;
     public DriverFactory df;
-    public Properties prop;
-    public LoginPage loginpage;
+    public static Properties prop;
+    public static LoginPage loginpage;
     public ProductListingPage prodlistingPage;
     public ProductDetailsPage proDetailsPage;
     public CartPage cartPage;
@@ -32,11 +35,45 @@ public class BaseTest {
     public void setup() {
 
         df = new DriverFactory();
-        prop = df.initProperties();
-
-        driver = df.initDriver(prop);
-        wait=df.defineWait(driver,60,1000);
+        prop = initProperties();
+        if(driver==null) {
+            driver = df.initDriver(prop);
+            wait = df.defineWait(driver, 60, 1000);
+        }
         loginpage = new LoginPage(driver,wait);
+
+    }
+    public static Properties initProperties() {
+        FileInputStream ip = null;
+        prop = new Properties();
+        String env = System.getProperty("env"); // will be passing through maven as mvn clean install -Denv
+        try {
+            if (env == null) {
+                System.out.println("Running on QA environment as no envrionment is specified");
+
+                ip = new FileInputStream("./src/test/resources/config/config.properties");
+            } else {
+                System.out.println("Running on the environment:" + env);
+                switch (env) {
+                    case "staging":
+                        ip = new FileInputStream("./src/test/resources/config/staging.config.properties");
+                        break;
+                    default:
+                        throw new Exception("Wrong Env Name: " + env);
+                }
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            // prop = new Properties();
+            prop.load(ip);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return prop;
     }
 
     @After

@@ -64,4 +64,11 @@ public class LoginPage {
     public void clickOnLoginButton(){
         wait.until(ExpectedConditions.elementToBeClickable(loginBtn)).click();
     }
+
+    public ProductListingPage doLogin(String un, String pwd) {
+        wait.until(ExpectedConditions.visibilityOf(username)).sendKeys(un);
+        wait.until(ExpectedConditions.visibilityOf(password)).sendKeys(pwd);
+        wait.until(ExpectedConditions.elementToBeClickable(loginBtn)).click();
+        return new ProductListingPage(driver,wait);
+    }
 }

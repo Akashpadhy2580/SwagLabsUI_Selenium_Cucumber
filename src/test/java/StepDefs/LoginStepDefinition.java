@@ -10,6 +10,7 @@ import pages.ProductListingPage;
 
 import static StepDefs.BaseTest.driver;
 import static StepDefs.BaseTest.wait;
+import static utils.DriverFactory.getDriver;
 
 public class LoginStepDefinition {
     LoginPage loginPage;
@@ -34,7 +35,7 @@ public class LoginStepDefinition {
     }
     @Then("I should be on the {string} page")
     public void i_am_able_to_see_products(String products) {
-        productListingPage=new ProductListingPage(driver,wait);
+        productListingPage=new ProductListingPage(getDriver(),BaseTest.wait);
         Assert.assertEquals(productListingPage.getProductListHeader(),products);
     }
     @Then("I should see the Header in the Login Page")

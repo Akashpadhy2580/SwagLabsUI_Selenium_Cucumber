@@ -25,17 +25,21 @@ import java.util.Properties;
 
 public class DriverFactory {
     public static ThreadLocal<RemoteWebDriver> tlDriver = new ThreadLocal<RemoteWebDriver>();
-    Properties prop;
-    public DesiredCapabilities capabilities;
+    public static Properties prop;
+    public static DesiredCapabilities capabilities;
     private static final Logger log = LogManager.getLogger(DriverFactory.class);
 
 
     public static RemoteWebDriver getDriver() {
+        if(tlDriver==null)
+        {
+            initDriver(prop);
+        }
         return tlDriver.get();
     }
 
     // This method is used to intilize the driver
-    public RemoteWebDriver initDriver(Properties prop) {
+    public static RemoteWebDriver initDriver(Properties prop) {
         String browserName = prop.getProperty("browser");
         log.info("Brower Name is:" + browserName);
         if (browserName.equalsIgnoreCase("chrome")) {
@@ -64,7 +68,7 @@ public class DriverFactory {
         return getDriver();
     }
 
-    private void init_remoteDriver(String browserName) {
+    private static void init_remoteDriver(String browserName) {
         System.out.println("Running test on remote browser:" + browserName);
         capabilities=new DesiredCapabilities();
 
@@ -101,40 +105,6 @@ public class DriverFactory {
             }
         } catch (MalformedURLException e) {
         }
-    }
-
-    public Properties initProperties() {
-        FileInputStream ip = null;
-        prop = new Properties();
-        String env = System.getProperty("env"); // will be passing through maven as mvn clean install -Denv
-        try {
-            if (env == null) {
-                System.out.println("Running on QA environment as no envrionment is specified");
-
-                ip = new FileInputStream("./src/test/resources/config/config.properties");
-            } else {
-                System.out.println("Running on the environment:" + env);
-                switch (env) {
-                    case "staging":
-                        ip = new FileInputStream("./src/test/resources/config/staging.config.properties");
-                        break;
-                    default:
-                        log.info("No Env found" + env);
-                        throw new Exception("Wrong Env Name: " + env);
-                }
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        try {
-            // prop = new Properties();
-            prop.load(ip);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return prop;
     }
     public static FluentWait<RemoteWebDriver> wait;
     public FluentWait<RemoteWebDriver> defineWait

@@ -1,6 +1,7 @@
 package pages;
 
 import io.qameta.allure.Step;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.FindBy;
@@ -18,8 +19,8 @@ public class ProductListingPage {
 
     @FindBy(xpath="//*[@id='header_container']/div[2]/span")
     private WebElement productListHeader;
-    @FindBy(css="div.inventory_container>div.inventory_list>div.inventory_item>div.inventory_item_description>div.inventory_item_label>a>div.inventory_item_name ")
-    private WebElement productlist;
+    @FindBy(xpath="//div[@class='inventory_list']/div//following::div[@class='inventory_item_name ']")
+    private List<WebElement> productlist;
 
     public ProductListingPage(RemoteWebDriver driver, FluentWait<RemoteWebDriver> wait) {
         PageFactory.initElements(driver,this);
